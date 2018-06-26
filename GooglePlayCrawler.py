@@ -9,14 +9,19 @@ import argparse
 import subprocess
 import gpcconstants
 
-def download_single_apk(apk_id, apk_folder, index, total):
+def download_single_apk(apk_id, apk_folder, index, total, force_overwrite, device_codename = 'hammerhead'):
     # remove existing APK
-    if os.path.exists(apk_folder + '/' + apk_id + '.apk'): os.remove(apk_folder + '/' + apk_id + '.apk')
+    if force_overwrite:
+        if os.path.exists(apk_folder + '/' + apk_id + '.apk'): os.remove(apk_folder + '/' + apk_id + '.apk')
+    else:
+        if os.path.exists(apk_folder + '/' + apk_id + '.apk'):
+            print('* ' + apk_folder + '/' + apk_id + '.apk' + ' exists! Not overwriting!')
+            return True
 
     # download APK
     print("(" + str(index) + "/" + str(total) + ")" + " Downloading: " + apk_id)
     try:
-        subprocess.check_output(['gplaycli','-d',apk_id,'-f',apk_folder])
+        subprocess.check_output(['gplaycli','-d',apk_id,'-f',apk_folder, '-dc', device_codename])
     except subprocess.CalledProcessError as e:
         print("**** Failed to download due to error: ", e)
         return False
@@ -55,7 +60,7 @@ def get_app_by_collection_category(collection, category, num, start):
         # If response code is not ok (200), print the resulting http error code with description
         r.raise_for_status()
 
-def download_batch_app(apk_folder, collection, category, num, start):
+def download_batch_app(apk_folder, collection, category, num, start, device_code, force_overwrite):
     # start the server as we need to query information of each app
     start_api_server(gpcconstants.GSCRAPPER_DIR)
     time.sleep(1)
@@ -72,7 +77,7 @@ def download_batch_app(apk_folder, collection, category, num, start):
     
     # for each app in the app list: download the app and store the app information
     for app in app_list:
-        if not download_single_apk(app, apk_folder, index, num_apps):
+        if not download_single_apk(app, apk_folder, index, num_apps, force_overwrite, device_code):
             app_info[app]=["Download Error"]
         else:
             complete_app_info=requests.get('http://localhost:3000/api/apps/'+app).json()
@@ -92,20 +97,24 @@ if __name__ == '__main__':
     # construct the argument parser
     ap = argparse.ArgumentParser(description='Download batch apks from Google Play Store.')
     ap.add_argument('-d','--dir', required=True, help='The folder to store the downloaded APKs (required)')
+    ap.add_argument('-f','--force_overwrite', nargs='?', const=True, default=False, type=bool, help='Option to overwrite the existing APKs in the directiory (default: diabled)')
     ap.add_argument('-a','--all', nargs='?', const=True, default=False,type=bool, help='Set this option to True will download all categories (default: False)')
     ap.add_argument('-c','--collection', nargs='?', default='TOP_FREE', help='The collection to download from {TOP_FREE,NEW_FREE,GROSSING,TRENDING} (default: TOP_FREE)')
     ap.add_argument('-g','--category', nargs='?', default='NONE', help='The category to download (default: NONE; Available options can be found in documentation).')
     ap.add_argument('-n','--number', nargs='?', default='120', help='The number of apps to download (default: 120; Max: 120).')
     ap.add_argument('-s','--start', nargs='?', default='0', help='The starting index of the retrieved list (default: 0; Max: 500)')
+    ap.add_argument('-dc','--device_code', nargs='?',const='hammerhead', default='hammerhead', help='The target device of the download apps (default: hammerhead)')
     
     # parse the arguments
     args = vars(ap.parse_args())
     apk_folder = args['dir']
+    force_overwrite = args['force_overwrite']
     download_all = args['all']
     collection = gpcconstants.COLLECTION.get(args['collection'])
     category = gpcconstants.CATEGORY.get(args['category'])
     number = args['number']
     start = args['start']
+    device_code = args['device_code']
     
     # get the app list
     if download_all:
@@ -114,6 +123,6 @@ if __name__ == '__main__':
             apk_folder_new = os.path.join(apk_folder, category)
             if not os.path.exists(apk_folder_new):
                 os.makedirs(apk_folder_new)
-            download_batch_app(apk_folder_new, collection, category, number, start)
+            download_batch_app(apk_folder_new, collection, category, number, start, device_code, force_overwrite)
     else:
-        download_batch_app(apk_folder, collection, category, number, start)
+        download_batch_app(apk_folder, collection, category, number, start, device_code, force_overwrite)

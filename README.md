@@ -38,6 +38,9 @@ python GooglePlayCrawler.py -d DIR (-a [ALL] -c [COLLECTION] -g [CATEGORY] -n [N
 ```
   -h, --help            show this help message and exit
   -d DIR, --dir DIR     The folder to store the downloaded APKs (required)
+  -f [FORCE_OVERWRITE], --force_overwrite [FORCE_OVERWRITE]
+                        Option to overwrite the existing APKs in the
+                        directiory (default: diabled)
   -a [ALL], --all [ALL]
                         Set this option to True will download all categories
                         (default: False)
@@ -54,9 +57,12 @@ python GooglePlayCrawler.py -d DIR (-a [ALL] -c [COLLECTION] -g [CATEGORY] -n [N
   -s [START], --start [START]
                         The starting index of the retrieved list (default: 0;
                         Max: 500)
+  -dc [DEVICE_CODE], --device_code [DEVICE_CODE]
+                        The target device of the download apps (default:
+                        hammerhead)
 ```
 
-### Example
+### Example Usages
 
 Check the available options:
 ```
@@ -68,14 +74,14 @@ Download the top 100 free apps from Google Play:
 python GooglePlayCrawler.py -d DIR -n 100
 ```
 
-Download the top 100 free apps from ANDROID_WEAR category:
+Download the top 100 free apps from ANDROID_WEAR category (overwriting the existing APKs):
 ```
-python GooglePlayCrawler.py -d DIR -g ANDROID_WEAR -n 100
+python GooglePlayCrawler.py -d DIR -g ANDROID_WEAR -n 100 -f
 ```
 
-Download the top 50th to 100th new apps from SOCIAL category:
+Download the top 50th to 100th new apps from SOCIAL category for Nexus5X:
 ```
-python GooglePlayCrawler.py -d DIR -g SOCIAL -n 50 -s 50
+python GooglePlayCrawler.py -d DIR -g SOCIAL -n 50 -s 50 - dc bullhead
 ```
 
 ## Authors
