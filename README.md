@@ -31,7 +31,7 @@ Change the GSCRAPPER_DIR in gpcconstants.py file to the folder where [google-pla
 
 ## Usage
 ```
-python GooglePlayCrawler.py -d DIR (-a [ALL] -c [COLLECTION] -g [CATEGORY] -n [NUMBER] -s [START]
+python GooglePlayCrawler.py -d DIR (-a [ALL] -c [COLLECTION] -g [CATEGORY] -n [NUMBER] -s [START])
 ```
 
 ### Available Options
