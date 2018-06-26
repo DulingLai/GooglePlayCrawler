@@ -1,6 +1,6 @@
 # GooglePlayCrawler
 
-A python script to download batch mobile apps from Google Play Store. It supports batch downloading by categories (default to Top Free 120) as well as batch updates to the newest version.
+A python script to batch download mobile apps from Google Play Store. It supports batch downloading by collection/categorie (default to Top Free 120) as well as recording the information (such as downloads/version/size/ratings/supported Android version etc.) of downloaded APKs in a csv files.
 
 ## Getting Started
 
