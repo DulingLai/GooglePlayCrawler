@@ -29,6 +29,8 @@ Please make sure the config file for [gplaycli](https://github.com/matlink/gplay
 
 Change the GSCRAPPER_DIR in gpcconstants.py file to the folder where [google-play-api](https://github.com/facundoolano/google-play-api) is installed.
 
+Google constantly checks the accounts activity and blocks the api access. To avoid the authentication error, it is recommended to set up two factor login and an app password, then use the app password to login.
+
 ## Usage
 ```
 python GooglePlayCrawler.py -d DIR (-a [ALL] -c [COLLECTION] -g [CATEGORY] -n [NUMBER] -s [START])
